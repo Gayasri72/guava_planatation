@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// In dev, VITE_API_URL is empty and we use the Vite proxy ('/api').
+// In production on Vercel, set VITE_API_URL to the backend URL + '/api',
+// e.g. https://guava-api.vercel.app/api
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
 });
 
 api.interceptors.request.use((config) => {

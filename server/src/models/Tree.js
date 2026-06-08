@@ -20,7 +20,6 @@ const treeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-treeSchema.index({ treeCode: 1 });
 treeSchema.index({ status: 1, 'location.plot': 1 });
 
 export default mongoose.model('Tree', treeSchema);

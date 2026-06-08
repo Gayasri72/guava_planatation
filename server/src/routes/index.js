@@ -6,6 +6,7 @@ import * as batches from '../controllers/batchController.js';
 import * as harvests from '../controllers/harvestController.js';
 import * as notifications from '../controllers/notificationController.js';
 import * as settings from '../controllers/settingsController.js';
+import { runHarvestCheck } from '../scheduler/harvestChecker.js';
 
 const router = Router();
 
@@ -17,6 +18,15 @@ router.post('/auth/google', auth.googleLogin);
 router.use(requireAuth);
 
 router.get('/auth/me', auth.me);
+
+// Manual trigger for the harvest check (used by the Notifications page).
+router.post('/dev/run-check', async (req, res, next) => {
+  try {
+    res.json(await runHarvestCheck());
+  } catch (e) {
+    next(e);
+  }
+});
 
 // Trees
 router.get('/trees', trees.listTrees);

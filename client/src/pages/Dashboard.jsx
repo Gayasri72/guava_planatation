@@ -37,13 +37,13 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Dashboard</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">Dashboard</h1>
         <p className="text-sm text-slate-500">
           {formatDate(new Date())} — overview of your plantation
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <StatCard label="Active Trees" value={treeStats.total} icon="🌳" />
         <StatCard label="Active Batches" value={batches.length} icon="🎨" />
         <StatCard

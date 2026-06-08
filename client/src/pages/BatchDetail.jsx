@@ -58,8 +58,8 @@ export default function BatchDetail() {
       <div className="card">
         <div className="flex items-center gap-3 mb-3">
           <ColorBadge color={batch.color} size="lg" />
-          <h1 className="text-2xl font-bold uppercase">{batch.color} Batch</h1>
-          <span className="ml-auto text-sm text-slate-500">{batch.batchCode}</span>
+          <h1 className="text-xl md:text-2xl font-bold uppercase">{batch.color} Batch</h1>
+          <span className="ml-auto text-xs md:text-sm text-slate-500">{batch.batchCode}</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -84,7 +84,7 @@ export default function BatchDetail() {
         </div>
 
         {batch.status !== 'harvested' && (
-          <div className="mt-4 flex items-end gap-3 border-t border-slate-100 pt-4">
+          <div className="mt-4 flex flex-wrap items-end gap-3 border-t border-slate-100 pt-4">
             <div>
               <label className="label">Adjust harvest duration (days)</label>
               <input
@@ -97,8 +97,11 @@ export default function BatchDetail() {
             <button onClick={saveDays} className="btn-secondary">
               Save
             </button>
-            <div className="ml-auto">
-              <button onClick={() => setShowHarvest((v) => !v)} className="btn-primary">
+            <div className="w-full sm:w-auto sm:ml-auto">
+              <button
+                onClick={() => setShowHarvest((v) => !v)}
+                className="btn-primary w-full sm:w-auto"
+              >
                 🧺 Log Harvest
               </button>
             </div>
@@ -109,7 +112,7 @@ export default function BatchDetail() {
       {showHarvest && (
         <div className="card space-y-4">
           <h2 className="text-lg font-semibold">Log Harvest</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <Field label="Fruits picked">
               <input
                 type="number"
@@ -165,7 +168,7 @@ export default function BatchDetail() {
             </Field>
           </div>
           <div className="flex justify-end">
-            <button onClick={submitHarvest} className="btn-primary">
+            <button onClick={submitHarvest} className="btn-primary w-full sm:w-auto">
               Save Harvest
             </button>
           </div>

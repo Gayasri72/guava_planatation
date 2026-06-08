@@ -25,13 +25,13 @@ export default function Notifications() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-800">🔔 Notifications</h1>
-        <div className="flex gap-2">
-          <button onClick={runCheck} className="btn-secondary">
-            Run harvest check now
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800">🔔 Notifications</h1>
+        <div className="grid grid-cols-2 sm:flex gap-2">
+          <button onClick={runCheck} className="btn-secondary text-xs sm:text-sm">
+            Run check now
           </button>
-          <button onClick={markAll} className="btn-secondary">
+          <button onClick={markAll} className="btn-secondary text-xs sm:text-sm">
             Mark all read
           </button>
         </div>

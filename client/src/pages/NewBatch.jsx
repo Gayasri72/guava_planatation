@@ -75,7 +75,7 @@ export default function NewBatch() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-800">➕ New Batch</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-slate-800">➕ New Batch</h1>
 
       <div className="card grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
@@ -184,11 +184,11 @@ export default function NewBatch() {
         />
       </div>
 
-      <div className="flex justify-end gap-3">
-        <button onClick={() => navigate(-1)} className="btn-secondary">
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+        <button onClick={() => navigate(-1)} className="btn-secondary sm:w-auto">
           Cancel
         </button>
-        <button onClick={submit} disabled={submitting} className="btn-primary">
+        <button onClick={submit} disabled={submitting} className="btn-primary sm:w-auto">
           {submitting ? 'Saving...' : `Save Batch (${selectedCount} trees)`}
         </button>
       </div>

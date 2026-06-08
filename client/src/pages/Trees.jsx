@@ -26,14 +26,14 @@ export default function Trees() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Trees</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-slate-800">Trees</h1>
           <p className="text-sm text-slate-500">{trees.length} trees shown</p>
         </div>
-        <button onClick={() => setShowAdd((v) => !v)} className="btn-primary">
-          ➕ Add Tree
+        <button onClick={() => setShowAdd((v) => !v)} className="btn-primary whitespace-nowrap">
+          ➕ <span className="hidden sm:inline ml-1">Add Tree</span>
         </button>
       </div>
 
@@ -71,14 +71,14 @@ export default function Trees() {
         </form>
       )}
 
-      <div className="flex gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md">
         <input
-          className="input max-w-xs"
+          className="input"
           placeholder="Search by tree code..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select className="input max-w-xs" value={plot} onChange={(e) => setPlot(e.target.value)}>
+        <select className="input" value={plot} onChange={(e) => setPlot(e.target.value)}>
           <option value="">All plots</option>
           <option value="A">Plot A</option>
           <option value="B">Plot B</option>
@@ -87,7 +87,21 @@ export default function Trees() {
         </select>
       </div>
 
-      <div className="card overflow-x-auto">
+      {/* ---------- Mobile: compact grid ---------- */}
+      <div className="md:hidden grid grid-cols-2 gap-2">
+        {trees.slice(0, 200).map((t) => (
+          <div key={t._id} className="card py-3">
+            <div className="font-semibold">{t.treeCode}</div>
+            <div className="text-xs text-slate-500">
+              Plot {t.location?.plot} · Row {t.location?.row ?? '—'}
+            </div>
+            <div className="text-xs text-slate-400">{t.variety}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ---------- Desktop: table ---------- */}
+      <div className="hidden md:block card overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="text-left text-slate-500">
             <tr>
@@ -114,10 +128,11 @@ export default function Trees() {
             ))}
           </tbody>
         </table>
-        {trees.length > 200 && (
-          <div className="text-xs text-slate-500 mt-2">Showing first 200 of {trees.length}</div>
-        )}
       </div>
+
+      {trees.length > 200 && (
+        <div className="text-xs text-slate-500">Showing first 200 of {trees.length}</div>
+      )}
     </div>
   );
 }

@@ -18,7 +18,7 @@ export default function Settings() {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <h1 className="text-2xl font-bold text-slate-800">⚙️ Settings</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-slate-800">⚙️ Settings</h1>
 
       <div className="card space-y-4">
         <h2 className="text-lg font-semibold">Harvest defaults</h2>
@@ -48,7 +48,7 @@ export default function Settings() {
 
       <div className="card space-y-4">
         <h2 className="text-lg font-semibold">Contact & channels</h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="label">Email</label>
             <input
@@ -82,7 +82,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <button onClick={save} className="btn-primary">
+      <button onClick={save} className="btn-primary w-full sm:w-auto">
         Save settings
       </button>
     </div>

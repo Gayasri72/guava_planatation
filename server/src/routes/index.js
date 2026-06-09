@@ -31,9 +31,11 @@ router.post('/dev/run-check', async (req, res, next) => {
 // Trees
 router.get('/trees', trees.listTrees);
 router.get('/trees/stats', trees.treeStats);
+router.get('/trees/grid', trees.gridTrees);
 router.get('/trees/:id', trees.getTree);
 router.post('/trees', trees.createTree);
 router.post('/trees/bulk', trees.bulkCreateTrees);
+router.post('/trees/add-row', trees.addRow);
 router.patch('/trees/:id', trees.updateTree);
 router.delete('/trees/:id', trees.deleteTree);
 

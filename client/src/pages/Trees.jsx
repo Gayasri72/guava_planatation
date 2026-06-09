@@ -158,7 +158,7 @@ export default function Trees() {
                   + Tree
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-nowrap gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
                 {trees.map((t) => {
                   const cls = t.color ? COLOR_TILE[t.color] || 'bg-slate-400 text-white border-slate-500' : EMPTY_TILE;
                   const isSel = selected?._id === t._id;
@@ -167,7 +167,7 @@ export default function Trees() {
                       key={t._id}
                       onClick={() => setSelected(isSel ? null : t)}
                       title={t.treeCode}
-                      className={`w-14 h-14 rounded-md border flex items-center justify-center text-[11px] font-semibold leading-none px-0.5 text-center break-all ${cls} ${
+                      className={`shrink-0 w-9 h-9 rounded border flex items-center justify-center text-[10px] font-semibold leading-none px-0.5 text-center ${cls} ${
                         isSel ? 'ring-2 ring-offset-1 ring-slate-800' : ''
                       }`}
                     >

@@ -28,11 +28,19 @@ export async function dispatchHarvestNotification({ batch, leadDays }) {
     });
   }
 
-  // Email
-  if (settings.channels.email && settings.contact?.email) {
+  // Email — send to every configured recipient at once
+  const recipients = [
+    ...(settings.contact?.emails || []),
+    settings.contact?.email, // legacy single field
+  ]
+    .map((e) => (e || '').trim())
+    .filter(Boolean);
+  const uniqueRecipients = [...new Set(recipients)];
+
+  if (settings.channels.email && uniqueRecipients.length > 0) {
     channels.push('email');
     await sendEmail({
-      to: settings.contact.email,
+      to: uniqueRecipients.join(', '),
       subject: title,
       text: message,
       html: `<h2>${title}</h2><p>${message}</p>

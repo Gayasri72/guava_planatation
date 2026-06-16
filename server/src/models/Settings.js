@@ -12,7 +12,8 @@ const settingsSchema = new mongoose.Schema(
       inApp: { type: Boolean, default: true },
     },
     contact: {
-      email: { type: String },
+      email: { type: String }, // legacy single recipient (kept for back-compat)
+      emails: { type: [String], default: [] }, // harvest alerts go to all of these
       phone: { type: String },
     },
     availableColors: {

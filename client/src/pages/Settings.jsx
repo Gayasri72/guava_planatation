@@ -48,23 +48,55 @@ export default function Settings() {
 
       <div className="card space-y-4">
         <h2 className="text-lg font-semibold">Contact & channels</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="label">Email</label>
-            <input
-              className="input"
-              value={s.contact?.email || ''}
-              onChange={(e) => setS({ ...s, contact: { ...s.contact, email: e.target.value } })}
-            />
+
+        <div>
+          <label className="label">Recipient emails (harvest alerts go to all of these)</label>
+          <div className="space-y-2">
+            {(s.contact?.emails || []).map((email, i) => (
+              <div key={i} className="flex gap-2">
+                <input
+                  type="email"
+                  className="input"
+                  placeholder="name@gmail.com"
+                  value={email}
+                  onChange={(e) => {
+                    const emails = [...(s.contact?.emails || [])];
+                    emails[i] = e.target.value;
+                    setS({ ...s, contact: { ...s.contact, emails } });
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const emails = (s.contact?.emails || []).filter((_, j) => j !== i);
+                    setS({ ...s, contact: { ...s.contact, emails } });
+                  }}
+                  className="btn-secondary px-3 shrink-0"
+                  aria-label="Remove email"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
           </div>
-          <div>
-            <label className="label">Phone (E.164, e.g., +94771234567)</label>
-            <input
-              className="input"
-              value={s.contact?.phone || ''}
-              onChange={(e) => setS({ ...s, contact: { ...s.contact, phone: e.target.value } })}
-            />
-          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setS({ ...s, contact: { ...s.contact, emails: [...(s.contact?.emails || []), ''] } })
+            }
+            className="text-sm text-guava-600 font-medium mt-2"
+          >
+            + Add email
+          </button>
+        </div>
+
+        <div>
+          <label className="label">Phone (E.164, e.g., +94771234567)</label>
+          <input
+            className="input"
+            value={s.contact?.phone || ''}
+            onChange={(e) => setS({ ...s, contact: { ...s.contact, phone: e.target.value } })}
+          />
         </div>
         <div className="flex gap-4 flex-wrap">
           {['email', 'sms', 'whatsapp', 'inApp'].map((ch) => (

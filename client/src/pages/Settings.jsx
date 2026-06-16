@@ -16,6 +16,15 @@ export default function Settings() {
     alert('Saved ✓');
   }
 
+  async function sendTest() {
+    try {
+      const r = await api.post('/settings/test-email');
+      alert(`Test email sent to:\n${r.data.sentTo.join('\n')}`);
+    } catch (e) {
+      alert(e.response?.data?.error || 'Failed to send test email');
+    }
+  }
+
   return (
     <div className="space-y-6 max-w-2xl">
       <h1 className="text-xl md:text-2xl font-bold text-slate-800">⚙️ Settings</h1>
@@ -114,9 +123,14 @@ export default function Settings() {
         </div>
       </div>
 
-      <button onClick={save} className="btn-primary w-full sm:w-auto">
-        Save settings
-      </button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button onClick={save} className="btn-primary w-full sm:w-auto">
+          Save settings
+        </button>
+        <button onClick={sendTest} className="btn-secondary w-full sm:w-auto">
+          ✉️ Send test email
+        </button>
+      </div>
     </div>
   );
 }

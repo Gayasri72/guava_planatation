@@ -22,14 +22,6 @@ export default function Settings() {
     }
   }
 
-  async function sendTest() {
-    try {
-      const r = await api.post('/settings/test-email');
-      toast.success(`Test email sent to ${r.data.sentTo.length} recipient(s)`);
-    } catch (e) {
-      toast.error(e.response?.data?.error || 'Failed to send test email');
-    }
-  }
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -129,14 +121,9 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button onClick={save} className="btn-primary w-full sm:w-auto">
-          Save settings
-        </button>
-        <button onClick={sendTest} className="btn-secondary w-full sm:w-auto">
-          ✉️ Send test email
-        </button>
-      </div>
+      <button onClick={save} className="btn-primary w-full sm:w-auto">
+        Save settings
+      </button>
     </div>
   );
 }

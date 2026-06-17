@@ -6,8 +6,8 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('saman@example.com');
-  const [password, setPassword] = useState('changeme');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
   const googleBtn = useRef(null);
@@ -88,13 +88,20 @@ export default function Login() {
 
         <div>
           <label className="label">Email</label>
-          <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input
+            className="input"
+            type="email"
+            placeholder="admin@gmail.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
         <div>
           <label className="label">Password</label>
           <input
             className="input"
             type="password"
+            placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />

@@ -61,6 +61,5 @@ router.post('/notifications/read-all', notifications.markAllRead);
 // Settings
 router.get('/settings', settings.getSettings);
 router.patch('/settings', settings.updateSettings);
-router.post('/settings/test-email', settings.sendTestEmail);
 
 export default router;

@@ -10,11 +10,13 @@ export async function ensureFarmerAccount() {
   }
   let user = await User.findOne({ email });
   if (!user) {
-    user = new User({ email, name: 'Farmer' });
-    await user.setPassword(password);
-    await user.save();
-    console.log(`✓ Created default farmer account: ${email}`);
+    user = new User({ email, name: 'Admin' });
+    console.log(`✓ Created admin account: ${email}`);
+  } else {
+    console.log(`✓ Reset password for: ${email}`);
   }
+  await user.setPassword(password);
+  await user.save();
 
   const settings = await Settings.getOrCreate();
   if (!settings.contact?.email) {

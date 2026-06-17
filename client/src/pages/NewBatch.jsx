@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client.js';
 import ColorBadge from '../components/ColorBadge.jsx';
+import { useToast } from '../components/Toast.jsx';
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
 export default function NewBatch() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [settings, setSettings] = useState(null);
   const [allTrees, setAllTrees] = useState([]);
   const [color, setColor] = useState('red');
@@ -51,7 +53,7 @@ export default function NewBatch() {
   expected.setDate(expected.getDate() + Number(days));
 
   async function submit() {
-    if (selectedCount === 0) return alert('Select at least one tree');
+    if (selectedCount === 0) return toast.error('Select at least one tree');
     setSubmitting(true);
     try {
       const trees = Object.entries(selected).map(([treeCode, fruitCount]) => ({
@@ -65,9 +67,10 @@ export default function NewBatch() {
         trees,
         notes,
       });
+      toast.success('Batch created');
       navigate(`/batches/${r.data._id}`);
     } catch (e) {
-      alert(e.response?.data?.error || 'Failed to create batch');
+      toast.error(e.response?.data?.error || 'Failed to create batch');
     } finally {
       setSubmitting(false);
     }

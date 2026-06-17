@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
+import { useToast } from '../components/Toast.jsx';
 
 export default function Settings() {
   const [s, setS] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
     api.get('/settings').then((r) => setS(r.data));
@@ -11,17 +13,21 @@ export default function Settings() {
   if (!s) return <div>Loading...</div>;
 
   async function save() {
-    const r = await api.patch('/settings', s);
-    setS(r.data);
-    alert('Saved ✓');
+    try {
+      const r = await api.patch('/settings', s);
+      setS(r.data);
+      toast.success('Settings saved');
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Failed to save settings');
+    }
   }
 
   async function sendTest() {
     try {
       const r = await api.post('/settings/test-email');
-      alert(`Test email sent to:\n${r.data.sentTo.join('\n')}`);
+      toast.success(`Test email sent to ${r.data.sentTo.length} recipient(s)`);
     } catch (e) {
-      alert(e.response?.data?.error || 'Failed to send test email');
+      toast.error(e.response?.data?.error || 'Failed to send test email');
     }
   }
 

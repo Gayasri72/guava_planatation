@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
+import { useToast } from '../components/Toast.jsx';
 
 export default function Notifications() {
   const [items, setItems] = useState([]);
+  const toast = useToast();
 
   async function load() {
     const r = await api.get('/notifications');
@@ -14,13 +16,24 @@ export default function Notifications() {
   }, []);
 
   async function markAll() {
-    await api.post('/notifications/read-all');
-    load();
+    try {
+      await api.post('/notifications/read-all');
+      await load();
+      toast.success('All notifications marked read');
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Failed to mark read');
+    }
   }
 
   async function runCheck() {
-    await api.post('/dev/run-check');
-    load();
+    try {
+      const r = await api.post('/dev/run-check');
+      await load();
+      const { checked = 0, dispatched = 0 } = r.data || {};
+      toast.success(`Checked ${checked} batch(es) · ${dispatched} alert(s) sent`);
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Harvest check failed');
+    }
   }
 
   return (

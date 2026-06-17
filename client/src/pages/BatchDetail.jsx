@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/client.js';
 import ColorBadge from '../components/ColorBadge.jsx';
+import { useToast } from '../components/Toast.jsx';
 
 function daysUntil(date) {
   const ms = new Date(date).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0);
@@ -11,6 +12,7 @@ function daysUntil(date) {
 export default function BatchDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const toast = useToast();
   const [batch, setBatch] = useState(null);
   const [days, setDays] = useState(90);
   const [showHarvest, setShowHarvest] = useState(false);
@@ -38,13 +40,18 @@ export default function BatchDetail() {
 
   async function saveDays() {
     await api.patch(`/batches/${batch._id}`, { harvestDurationDays: Number(days) });
-    load();
+    await load();
+    toast.success('Harvest date updated');
   }
 
   async function submitHarvest() {
-    await api.post('/harvests', { batchId: batch._id, ...harvest });
-    alert('Harvest logged ✓');
-    navigate('/harvests');
+    try {
+      await api.post('/harvests', { batchId: batch._id, ...harvest });
+      toast.success('Harvest logged');
+      navigate('/harvests');
+    } catch (e) {
+      toast.error(e.response?.data?.error || 'Failed to log harvest');
+    }
   }
 
   const dleft = daysUntil(batch.expectedHarvestDate);

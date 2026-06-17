@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
+import { useToast } from '../components/Toast.jsx';
 
 // Solid fill + readable text for each bag color. A tree with no active bag
 // shows as a plain empty tile.
@@ -28,9 +29,21 @@ export default function Trees() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const [newRow, setNewRow] = useState('');
   const [newCount, setNewCount] = useState(10);
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
+
+  function select(tree) {
+    setConfirmRemove(false);
+    setSelected((cur) => (cur?._id === tree._id ? null : tree));
+  }
+
+  function closeSheet() {
+    setConfirmRemove(false);
+    setSelected(null);
+  }
 
   async function load() {
     const r = await api.get('/trees/grid');
@@ -52,8 +65,9 @@ export default function Trees() {
       setNewRow('');
       setNewCount(10);
       await load();
+      toast.success(`Added ${Number(newCount) || 1} tree(s) to row ${newRow.trim().toUpperCase()}`);
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to add row');
+      toast.error(err.response?.data?.error || 'Failed to add row');
     } finally {
       setBusy(false);
     }
@@ -64,18 +78,23 @@ export default function Trees() {
     try {
       await api.post('/trees/add-row', { row, count: 1 });
       await load();
+      toast.success(`Added a tree to row ${row}`);
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to add tree');
     } finally {
       setBusy(false);
     }
   }
 
   async function removeTree(tree) {
-    if (!confirm(`Remove tree ${tree.treeCode}?`)) return;
     setBusy(true);
     try {
       await api.delete(`/trees/${tree._id}`);
-      setSelected(null);
+      closeSheet();
       await load();
+      toast.success(`Removed ${tree.treeCode}`);
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to remove tree');
     } finally {
       setBusy(false);
     }
@@ -164,7 +183,7 @@ export default function Trees() {
                       return (
                         <button
                           key={t._id}
-                          onClick={() => setSelected(isSel ? null : t)}
+                          onClick={() => select(t)}
                           title={t.treeCode}
                           className={`shrink-0 w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold leading-none ${cls} ${
                             isSel ? 'ring-2 ring-offset-1 ring-slate-800' : ''
@@ -213,15 +232,25 @@ export default function Trees() {
                   : 'No active bag'}
               </div>
             </div>
+            {confirmRemove ? (
+              <button
+                onClick={() => removeTree(selected)}
+                disabled={busy}
+                className="btn-danger text-xs px-3 min-h-0 py-2 shrink-0"
+              >
+                Confirm
+              </button>
+            ) : (
+              <button
+                onClick={() => setConfirmRemove(true)}
+                disabled={busy}
+                className="text-xs font-medium text-red-600 px-3 py-2 rounded hover:bg-red-50 shrink-0"
+              >
+                Remove
+              </button>
+            )}
             <button
-              onClick={() => removeTree(selected)}
-              disabled={busy}
-              className="text-xs font-medium text-red-600 px-3 py-2 rounded hover:bg-red-50 shrink-0"
-            >
-              Remove
-            </button>
-            <button
-              onClick={() => setSelected(null)}
+              onClick={closeSheet}
               className="text-slate-400 px-2 shrink-0"
               aria-label="Close"
             >

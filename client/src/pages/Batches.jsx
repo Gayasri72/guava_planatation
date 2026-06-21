@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/client.js';
 import ColorBadge from '../components/ColorBadge.jsx';
+import { usePalette } from '../components/Palette.jsx';
 
 function daysUntil(date) {
   const ms = new Date(date).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0);
@@ -18,6 +19,7 @@ export default function Batches() {
   const [batches, setBatches] = useState([]);
   const [status, setStatus] = useState('');
   const [color, setColor] = useState('');
+  const { palette } = usePalette();
 
   useEffect(() => {
     (async () => {
@@ -45,8 +47,8 @@ export default function Batches() {
         </select>
         <select className="input" value={color} onChange={(e) => setColor(e.target.value)}>
           <option value="">All colors</option>
-          {['red', 'yellow', 'blue', 'green', 'white', 'pink', 'orange', 'purple'].map((c) => (
-            <option key={c} value={c}>{c}</option>
+          {palette.map((c) => (
+            <option key={c.name} value={c.name}>{c.name}</option>
           ))}
         </select>
       </div>

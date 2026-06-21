@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/client.js';
 import ColorBadge from '../components/ColorBadge.jsx';
 import { useToast } from '../components/Toast.jsx';
+import { usePalette } from '../components/Palette.jsx';
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
 export default function NewBatch() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { palette } = usePalette();
   const [settings, setSettings] = useState(null);
   const [allTrees, setAllTrees] = useState([]);
   const [color, setColor] = useState('red');
@@ -84,16 +86,16 @@ export default function NewBatch() {
         <div>
           <label className="label">Bag color</label>
           <div className="flex gap-2 flex-wrap">
-            {(settings?.availableColors || []).map((c) => (
+            {palette.map((c) => (
               <button
-                key={c}
+                key={c.name}
                 type="button"
-                onClick={() => setColor(c)}
+                onClick={() => setColor(c.name)}
                 className={`px-3 py-2 rounded-md border text-sm flex items-center gap-2 ${
-                  color === c ? 'border-guava-600 bg-guava-50' : 'border-slate-200'
+                  color === c.name ? 'border-guava-600 bg-guava-50' : 'border-slate-200'
                 }`}
               >
-                <ColorBadge color={c} /> {c}
+                <ColorBadge color={c.name} /> {c.name}
               </button>
             ))}
           </div>

@@ -1,22 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
 import { useToast } from '../components/Toast.jsx';
-
-// Solid fill + readable text for each bag color. A tree with no active bag
-// shows as a plain empty tile.
-const COLOR_TILE = {
-  red: 'bg-red-500 text-white',
-  yellow: 'bg-yellow-400 text-yellow-900',
-  blue: 'bg-blue-500 text-white',
-  green: 'bg-green-500 text-white',
-  white: 'bg-white text-slate-700 border border-slate-300',
-  pink: 'bg-pink-400 text-white',
-  orange: 'bg-orange-500 text-white',
-  purple: 'bg-purple-500 text-white',
-};
-const EMPTY_TILE = 'bg-white text-slate-400 border border-slate-200';
-
-const KNOWN_COLORS = ['red', 'yellow', 'blue', 'green', 'orange', 'pink', 'purple', 'white'];
+import { usePalette } from '../components/Palette.jsx';
+import { textOn } from '../colors.js';
 
 function daysUntil(date) {
   if (!date) return null;
@@ -34,6 +20,13 @@ export default function Trees() {
   const [newCount, setNewCount] = useState(10);
   const [busy, setBusy] = useState(false);
   const toast = useToast();
+  const { palette, hexFor } = usePalette();
+
+  function tileStyle(color) {
+    if (!color) return undefined;
+    const hex = hexFor(color);
+    return { backgroundColor: hex, color: textOn(hex), borderColor: 'rgba(0,0,0,0.12)' };
+  }
 
   function select(tree) {
     setConfirmRemove(false);
@@ -62,10 +55,11 @@ export default function Trees() {
     setBusy(true);
     try {
       await api.post('/trees/add-row', { row: newRow.trim(), count: Number(newCount) || 1 });
+      const label = newRow.trim().toUpperCase();
       setNewRow('');
       setNewCount(10);
       await load();
-      toast.success(`Added ${Number(newCount) || 1} tree(s) to row ${newRow.trim().toUpperCase()}`);
+      toast.success(`Added ${Number(newCount) || 1} tree(s) to row ${label}`);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to add row');
     } finally {
@@ -139,14 +133,17 @@ export default function Trees() {
       {/* Legend */}
       <div className="card flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-600">
         <span className="font-medium text-slate-500">Soonest bag:</span>
-        {KNOWN_COLORS.map((c) => (
-          <span key={c} className="flex items-center gap-1.5">
-            <span className={`inline-block w-3.5 h-3.5 rounded ${COLOR_TILE[c]}`} />
-            {c}
+        {palette.map((c) => (
+          <span key={c.name} className="flex items-center gap-1.5">
+            <span
+              className="inline-block w-3.5 h-3.5 rounded border border-black/10"
+              style={{ backgroundColor: c.hex }}
+            />
+            {c.name}
           </span>
         ))}
         <span className="flex items-center gap-1.5">
-          <span className={`inline-block w-3.5 h-3.5 rounded ${EMPTY_TILE}`} />
+          <span className="inline-block w-3.5 h-3.5 rounded border border-dashed border-slate-300 bg-white" />
           none
         </span>
       </div>
@@ -176,18 +173,16 @@ export default function Trees() {
                   {/* Tiles */}
                   <div className="flex items-center gap-1 px-2 py-2">
                     {trees.map((t) => {
-                      const cls = t.color
-                        ? COLOR_TILE[t.color] || 'bg-slate-400 text-white'
-                        : EMPTY_TILE;
                       const isSel = selected?._id === t._id;
                       return (
                         <button
                           key={t._id}
                           onClick={() => select(t)}
                           title={t.treeCode}
-                          className={`shrink-0 w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold leading-none ${cls} ${
-                            isSel ? 'ring-2 ring-offset-1 ring-slate-800' : ''
-                          }`}
+                          style={tileStyle(t.color)}
+                          className={`shrink-0 w-8 h-8 rounded border flex items-center justify-center text-[10px] font-bold leading-none ${
+                            t.color ? '' : 'bg-white text-slate-400 border-dashed border-slate-300'
+                          } ${isSel ? 'ring-2 ring-offset-1 ring-slate-800' : ''}`}
                         >
                           {t.position ?? t.treeCode}
                         </button>
@@ -214,9 +209,8 @@ export default function Trees() {
         <div className="fixed bottom-20 md:bottom-4 left-0 right-0 px-4 z-40">
           <div className="card max-w-md mx-auto shadow-xl border flex items-center gap-3">
             <span
-              className={`inline-block w-8 h-8 rounded shrink-0 ${
-                selected.color ? COLOR_TILE[selected.color] || 'bg-slate-400' : EMPTY_TILE
-              }`}
+              className="inline-block w-8 h-8 rounded border border-black/10 shrink-0"
+              style={{ backgroundColor: selected.color ? hexFor(selected.color) : '#fff' }}
             />
             <div className="flex-1 min-w-0">
               <div className="font-semibold text-slate-800">{selected.treeCode}</div>
@@ -249,11 +243,7 @@ export default function Trees() {
                 Remove
               </button>
             )}
-            <button
-              onClick={closeSheet}
-              className="text-slate-400 px-2 shrink-0"
-              aria-label="Close"
-            >
+            <button onClick={closeSheet} className="text-slate-400 px-2 shrink-0" aria-label="Close">
               ✕
             </button>
           </div>

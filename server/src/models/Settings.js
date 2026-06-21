@@ -1,5 +1,24 @@
 import mongoose from 'mongoose';
 
+const colorSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, lowercase: true, trim: true },
+    hex: { type: String, default: '#94a3b8' },
+  },
+  { _id: false }
+);
+
+const DEFAULT_COLORS = [
+  { name: 'red', hex: '#ef4444' },
+  { name: 'yellow', hex: '#facc15' },
+  { name: 'blue', hex: '#3b82f6' },
+  { name: 'green', hex: '#22c55e' },
+  { name: 'white', hex: '#ffffff' },
+  { name: 'pink', hex: '#f472b6' },
+  { name: 'orange', hex: '#f97316' },
+  { name: 'purple', hex: '#a855f7' },
+];
+
 const settingsSchema = new mongoose.Schema(
   {
     singleton: { type: String, default: 'main', unique: true },
@@ -17,8 +36,8 @@ const settingsSchema = new mongoose.Schema(
       phone: { type: String },
     },
     availableColors: {
-      type: [String],
-      default: ['red', 'yellow', 'blue', 'green', 'white', 'pink', 'orange', 'purple'],
+      type: [colorSchema],
+      default: () => DEFAULT_COLORS,
     },
   },
   { timestamps: true }

@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
+import { PaletteProvider } from './components/Palette.jsx';
 import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Trees from './pages/Trees.jsx';
@@ -24,7 +25,9 @@ export default function App() {
         path="/"
         element={
           <PrivateRoute>
-            <Layout />
+            <PaletteProvider>
+              <Layout />
+            </PaletteProvider>
           </PrivateRoute>
         }
       >

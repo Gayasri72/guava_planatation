@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client.js';
 import { useToast } from '../components/Toast.jsx';
+import { usePalette } from '../components/Palette.jsx';
 
 export default function Settings() {
   const [s, setS] = useState(null);
   const toast = useToast();
+  const { reload: reloadPalette } = usePalette();
 
   useEffect(() => {
     api.get('/settings').then((r) => setS(r.data));
@@ -12,10 +14,18 @@ export default function Settings() {
 
   if (!s) return <div>Loading...</div>;
 
+  const colors = s.availableColors || [];
+  const setColors = (next) => setS({ ...s, availableColors: next });
+
   async function save() {
+    // Drop empty/incomplete color rows before saving
+    const cleanColors = (s.availableColors || [])
+      .map((c) => ({ name: (c.name || '').trim().toLowerCase(), hex: c.hex || '#94a3b8' }))
+      .filter((c) => c.name);
     try {
-      const r = await api.patch('/settings', s);
+      const r = await api.patch('/settings', { ...s, availableColors: cleanColors });
       setS(r.data);
+      await reloadPalette();
       toast.success('Settings saved');
     } catch (e) {
       toast.error(e.response?.data?.error || 'Failed to save settings');
@@ -119,6 +129,56 @@ export default function Settings() {
             </label>
           ))}
         </div>
+      </div>
+
+      <div className="card space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Bag colors</h2>
+          <p className="text-xs text-slate-500">
+            These appear when creating a batch and color the plantation map. Pick any shade.
+          </p>
+        </div>
+        <div className="space-y-2">
+          {colors.map((c, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <input
+                type="color"
+                className="h-10 w-12 shrink-0 rounded border border-slate-300 bg-white p-1 cursor-pointer"
+                value={c.hex || '#94a3b8'}
+                onChange={(e) => {
+                  const next = [...colors];
+                  next[i] = { ...next[i], hex: e.target.value };
+                  setColors(next);
+                }}
+              />
+              <input
+                className="input"
+                placeholder="color name (e.g. red)"
+                value={c.name || ''}
+                onChange={(e) => {
+                  const next = [...colors];
+                  next[i] = { ...next[i], name: e.target.value };
+                  setColors(next);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setColors(colors.filter((_, j) => j !== i))}
+                className="btn-secondary px-3 shrink-0"
+                aria-label="Remove color"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setColors([...colors, { name: '', hex: '#22c55e' }])}
+          className="text-sm text-guava-600 font-medium"
+        >
+          + Add color
+        </button>
       </div>
 
       <button onClick={save} className="btn-primary w-full sm:w-auto">
